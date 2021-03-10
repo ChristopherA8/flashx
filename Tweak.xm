@@ -9,17 +9,19 @@
 -(BOOL)setFlashlightLevel:(float)arg1 withError:(id*)arg2 ;
 @end
 
+
+static UIButton *button;
 static BOOL flashlightEnabled = NO;
 
 %hook CSQuickActionsView
 -(void)layoutSubviews {
     %orig;
-
-	UIButton *button = [%c(UIButton) buttonWithType:UIButtonTypeCustom];
-	[button addTarget:self action:@selector(toggleFlashlight) forControlEvents:UIControlEventTouchUpInside];
-	button.frame = self.frame;
-
-	[self.flashlightButton addSubview:button];
+    if (!button) {
+        button = [%c(UIButton) buttonWithType:UIButtonTypeCustom];
+        [button addTarget:self action:@selector(toggleFlashlight) forControlEvents:UIControlEventTouchUpInside];
+        button.frame = self.frame;
+        [self.flashlightButton addSubview:button];
+    }
 }
 %new
 -(void)toggleFlashlight {
